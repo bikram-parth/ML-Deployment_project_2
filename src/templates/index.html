@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SmartFlow AI | Intelligent Urban Traffic Analytics</title>
+  <meta
+    name="description"
+    content="SmartFlow AI predicts urban traffic congestion levels from road, traffic, weather and time inputs using a trained machine learning model."
+  />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  />
+
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+  />
+
+  <link rel="stylesheet" href="style.css" />
+  <script src="script.js" defer></script>
+</head>
+
+<body>
+  <div class="bg-scene" aria-hidden="true">
+    <span class="traffic-line line-1"></span>
+    <span class="traffic-line line-2"></span>
+    <span class="traffic-line line-3"></span>
+    <span class="traffic-line line-4"></span>
+  </div>
+
+  <a class="skip-link" href="#predict">Skip to prediction form</a>
+  <header class="site-header">
+    <div class="container nav-bar">
+      <a class="brand" href="#dashboard" aria-label="SmartFlow AI home">
+        <span class="brand-icon" aria-hidden="true"><i class="fa-solid fa-traffic-light"></i></span>
+        <span class="brand-text">
+          <span class="brand-name">SmartFlow AI</span>
+          <span class="brand-sub">Intelligent Urban Traffic Analytics</span>
+        </span>
+      </a>
+
+      <nav id="site-nav" class="nav-links" aria-label="Primary">
+        <a href="#dashboard" class="nav-link">Dashboard</a>
+        <a href="#predict" class="nav-link">Predict Congestion</a>
+        <a href="#about" class="nav-link">About</a>
+      </nav>
+
+      <button
+        type="button"
+        id="api-status"
+        class="api-status"
+        data-status="checking"
+        title="Click to re-check the API"
+        aria-live="polite"
+      >
+        <span class="status-dot" aria-hidden="true"></span>
+        <span id="api-status-text">Checking API…</span>
+      </button>
+
+      <button
+        type="button"
+        id="nav-toggle"
+        class="nav-toggle"
+        aria-expanded="false"
+        aria-controls="site-nav"
+        aria-label="Toggle navigation menu"
+      >
+        <i class="fa-solid fa-bars" aria-hidden="true"></i>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <section id="dashboard" class="hero">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <h1>Predict Traffic. Optimize Cities.</h1>
+          <p class="hero-subtitle">
+            Leverage machine learning to predict urban congestion using road conditions,
+            traffic density, weather, and temporal patterns.
+          </p>
+
+          <a href="#predict" class="btn btn-primary btn-lg">
+            <i class="fa-solid fa-gauge-high" aria-hidden="true"></i>
+            Predict Congestion
+          </a>
+
+          <ul class="feature-list">
+            <li>
+              <i class="fa-solid fa-brain" aria-hidden="true"></i>
+              <span>Machine Learning Powered</span>
+            </li>
+            <li>
+              <i class="fa-solid fa-layer-group" aria-hidden="true"></i>
+              <span>Multi-Factor Analysis</span>
+            </li>
+            <li>
+              <i class="fa-solid fa-bolt" aria-hidden="true"></i>
+              <span>Instant Predictions</span>
+            </li>
+          </ul>
+        </div>
+
+        <aside class="hero-visual glass" aria-label="Possible congestion levels">
+          <p class="visual-title">Congestion levels the model can return</p>
+          <ul class="level-legend">
+            <li data-level="Low">
+              <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+              <span class="legend-name">Low</span>
+              <span class="legend-bar"><span style="--w: 25%"></span></span>
+            </li>
+            <li data-level="Moderate">
+              <i class="fa-solid fa-gauge" aria-hidden="true"></i>
+              <span class="legend-name">Moderate</span>
+              <span class="legend-bar"><span style="--w: 50%"></span></span>
+            </li>
+            <li data-level="High">
+              <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+              <span class="legend-name">High</span>
+              <span class="legend-bar"><span style="--w: 75%"></span></span>
+            </li>
+            <li data-level="Severe">
+              <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+              <span class="legend-name">Severe</span>
+              <span class="legend-bar"><span style="--w: 100%"></span></span>
+            </li>
+          </ul>
+          <p class="visual-note">
+            Illustration of the categories only. Results come from your inputs.
+          </p>
+        </aside>
+      </div>
+    </section>
+
+    <section id="predict" class="section">
+      <div class="container">
+        <div class="section-head">
+          <h2>Predict congestion</h2>
+          <p>
+            Enter road, traffic and weather details. The model predicts a congestion level from
+            the values you supply, so the result is only as accurate as the inputs.
+          </p>
+        </div>
+
+        <div class="glass panel">
+          <form id="predict-form" novalidate>
+            <!-- Section 1: location and road -->
+            <fieldset class="form-section">
+              <legend><i class="fa-solid fa-road" aria-hidden="true"></i> Location and road</legend>
+              <div class="form-grid">
+                <div class="field">
+                  <label for="city_zone">City zone</label>
+                  <select id="city_zone" name="city_zone" required aria-describedby="city_zone-help city_zone-error">
+                    <option value="" disabled selected>Select a zone</option>
+                    <option value="Financial District">Financial District</option>
+                    <option value="Industrial East">Industrial East</option>
+                    <option value="Suburban North">Suburban North</option>
+                    <option value="Downtown Core">Downtown Core</option>
+                    <option value="Tech Park">Tech Park</option>
+                    <option value="Residential West">Residential West</option>
+                  </select>
+                  <p class="help" id="city_zone-help">Area of the city where the road is located.</p>
+                  <p class="error" id="city_zone-error"></p>
+                </div>
+
+                <div class="field">
+                  <label for="road_type">Road type</label>
+                  <select id="road_type" name="road_type" required aria-describedby="road_type-help road_type-error">
+                    <option value="" disabled selected>Select a road type</option>
+                    <option value="Local Street">Local Street</option>
+                    <option value="Arterial">Arterial</option>
+                    <option value="Collector">Collector</option>
+                    <option value="Highway">Highway</option>
+                  </select>
+                  <p class="help" id="road_type-help">Functional class of the road segment.</p>
+                  <p class="error" id="road_type-error"></p>
+                </div>
+
+                <div class="field">
+                  <label for="lanes">Number of lanes</label>
+                  <input
+                    type="number" id="lanes" name="lanes" inputmode="numeric"
+                    min="2" max="4" step="1" placeholder="e.g. 3" required
+                    aria-describedby="lanes-help lanes-error"
+                  />
+                  <p class="help" id="lanes-help">Whole number from 2 to 4.</p>
+                  <p class="error" id="lanes-error"></p>
+                </div>
+
+                <div class="field">
+                  <label for="speed_limit">Speed limit</label>
+                  <div class="input-wrap">
+                    <input
+                      type="number" id="speed_limit" name="speed_limit" inputmode="decimal"
+                      min="40" max="90" step="any" placeholder="e.g. 60" required
+                      aria-describedby="speed_limit-help speed_limit-error"
+                    />
+                    <span class="suffix" aria-hidden="true">km/h</span>
+                  </div>
+                  <p class="help" id="speed_limit-help">Greater than 40 and up to 90.</p>
+                  <p class="error" id="speed_limit-error"></p>
+                </div>
+              </div>
+            </fieldset>
+
+            <!-- Section 2: traffic measurements -->
+            <fieldset class="form-section">
+              <legend><i class="fa-solid fa-car-side" aria-hidden="true"></i> Traffic measurements</legend>
+              <div class="form-grid">
+                <div class="field">
+                  <label for="vehicle_count">Vehicle count</label>
+                  <div class="input-wrap">
+                    <input
+                      type="number" id="vehicle_count" name="vehicle_count" inputmode="numeric"
+                      min="54" max="3162" step="1" placeholder="e.g. 500" required
+                      aria-describedby="vehicle_count-help vehicle_count-error"
+                    />
+                    <span class="suffix" aria-hidden="true">vehicles</span>
+                  </div>
+                  <p class="help" id="vehicle_count-help">Whole number from 54 to 3162.</p>
+                  <p class="error" id="vehicle_count-error"></p>
+                </div>
+
+                <div class="field">
+                  <label for="average_speed">Average speed</label>
+                  <div class="input-wrap">
+                    <input
+                      type="number" id="average_speed" name="average_speed" inputmode="decimal"
+                      min="5" max="90" step="any" placeholder="e.g. 35" required
+                      aria-describedby="average_speed-help average_speed-error"
+                    />
+                    <span class="suffix" aria-hidden="true">km/h</span>
+                  </div>
+                  <p class="help" id="average_speed-help">Observed speed of vehicles, from 5 to 90.</p>
+                  <p class="error" id="average_speed-error"></p>
+                </div>
+
+                <div class="field">
+                  <label for="traffic_density">Traffic density</label>
+                  <div class="input-wrap">
+                    <input
+                      type="number" id="traffic_density" name="traffic_density" inputmode="decimal"
+                      min="9" max="378" step="any" placeholder="e.g. 120" required
+                      aria-describedby="traffic_density-help traffic_density-error"
+                    />
+                    <span class="suffix" aria-hidden="true">veh/km</span>
+                  </div>
+                  <p class="help" id="traffic_density-help">Vehicles per kilometre, from 9 to 378.</p>
+                  <p class="error" id="traffic_density-error"></p>
+                </div>
+
+                <div class="field">
+                  <label for="queue_length">Queue length</label>
+                  <div class="input-wrap">
+                    <input
+                      type="number" id="queue_length" name="queue_length" inputmode="decimal"
+                      min="0" max="10111" step="any" placeholder="e.g. 300" required
+                      aria-describedby="queue_length-help queue_length-error"
+                    />
+                    <span class="suffix" aria-hidden="true">m</span>
+                  </div>
+                  <p class="help" id="queue_length-help">Length of stopped traffic, from 0 to 10111.</p>
+                  <p class="error" id="queue_length-error"></p>
+                </div>
+              </div>
+            </fieldset>
+
+            <!-- Section 3: time and environment -->
+            <fieldset class="form-section">
+              <legend><i class="fa-solid fa-cloud-sun-rain" aria-hidden="true"></i> Time and environment</legend>
+              <div class="form-grid">
+                <div class="field">
+                  <label for="hour">Hour of day (0–23)</label>
+                  <input
+                    type="number" id="hour" name="hour" inputmode="numeric"
+                    min="0" max="23" step="1" placeholder="e.g. 18 for 6 PM" required
+                    aria-describedby="hour-help hour-error"
+                  />
+                  <p class="help" id="hour-help">24-hour clock. 0 is midnight, 18 is 6 PM.</p>
+                  <p class="error" id="hour-error"></p>
+                </div>
+
+                <div class="field">
+                  <label for="is_weekend">Weekend</label>
+                  <select id="is_weekend" name="is_weekend" required aria-describedby="is_weekend-help is_weekend-error">
+                    <option value="" disabled selected>Select</option>
+                    <option value="0">No (0)</option>
+                    <option value="1">Yes (1)</option>
+                  </select>
+                  <p class="help" id="is_weekend-help">Is the day a Saturday or Sunday?</p>
+                  <p class="error" id="is_weekend-error"></p>
+                </div>
+
+                <div class="field field-wide">
+                  <label for="weather_condition">Weather condition</label>
+                  <select id="weather_condition" name="weather_condition" required aria-describedby="weather_condition-help weather_condition-error">
+                    <option value="" disabled selected>Select weather</option>
+                    <option value="Clear">Clear</option>
+                    <option value="Rain">Rain</option>
+                    <option value="Heavy Rain">Heavy Rain</option>
+                    <option value="Fog">Fog</option>
+                  </select>
+                  <p class="help" id="weather_condition-help">Weather at the time of the prediction.</p>
+                  <p class="error" id="weather_condition-error"></p>
+                </div>
+              </div>
+            </fieldset>
+
+            <!-- Form-level error / info message -->
+            <div id="form-banner" class="banner" role="alert" hidden>
+              <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+              <p id="form-banner-text"></p>
+            </div>
+
+            <p class="form-note">
+              <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+              Predictions depend entirely on the values you enter. This tool does not fetch live traffic data.
+            </p>
+
+            <div class="form-actions">
+              <button type="submit" id="submit-btn" class="btn btn-primary btn-lg">
+                <span class="spinner" aria-hidden="true"></span>
+                <i class="fa-solid fa-gauge-high btn-icon" aria-hidden="true"></i>
+                <span id="submit-label">Predict Congestion</span>
+              </button>
+              <button type="reset" id="reset-btn" class="btn btn-ghost btn-lg">
+                <i class="fa-solid fa-rotate-left" aria-hidden="true"></i>
+                Reset Form
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Prediction result: hidden until the API returns a valid result -->
+        <section id="result-card" class="glass result-card" data-level="" aria-labelledby="result-heading" tabindex="-1" hidden>
+          <h3 id="result-heading">Prediction Result</h3>
+
+          <div class="result-main">
+            <div class="level-badge" aria-hidden="true">
+              <i id="result-icon" class="fa-solid"></i>
+            </div>
+            <div>
+              <p class="result-label">Predicted congestion level</p>
+              <p class="result-level" id="result-level"></p>
+            </div>
+          </div>
+
+          <p class="result-description" id="result-description"></p>
+
+          <p class="result-time">
+            <i class="fa-regular fa-clock" aria-hidden="true"></i>
+            Requested at <time id="result-time"></time>
+          </p>
+
+          <h4 class="summary-title">Submitted inputs</h4>
+          <dl class="summary">
+            <div><dt>Road type</dt><dd id="sum-road"></dd></div>
+            <div><dt>City zone</dt><dd id="sum-zone"></dd></div>
+            <div><dt>Weather</dt><dd id="sum-weather"></dd></div>
+            <div><dt>Vehicle count</dt><dd id="sum-vehicles"></dd></div>
+            <div><dt>Average speed</dt><dd id="sum-speed"></dd></div>
+          </dl>
+
+          <button type="button" id="predict-again" class="btn btn-ghost">
+            <i class="fa-solid fa-arrows-rotate" aria-hidden="true"></i>
+            Predict Again
+          </button>
+        </section>
+      </div>
+    </section>
+
+    <!-- ============ ABOUT: INFO CARDS + HOW IT WORKS ============ -->
+    <section id="about" class="section">
+      <div class="container">
+        <div class="section-head">
+          <h2>How SmartFlow AI reaches a prediction</h2>
+          <p>Three groups of inputs feed one trained model that returns a congestion category.</p>
+        </div>
+
+        <div class="info-grid">
+          <article class="glass info-card">
+            <span class="info-icon" aria-hidden="true"><i class="fa-solid fa-car-on"></i></span>
+            <h3>Traffic Intelligence</h3>
+            <p>
+              Vehicle count, average speed, traffic density and queue length describe how busy a
+              road is right now. The model compares these measurements with the road type, lane
+              count and speed limit to judge how close the road is to its capacity.
+            </p>
+          </article>
+
+          <article class="glass info-card">
+            <span class="info-icon" aria-hidden="true"><i class="fa-solid fa-cloud-showers-heavy"></i></span>
+            <h3>Environmental Context</h3>
+            <p>
+              Weather condition, hour of day and weekend status add context to the traffic
+              measurements. The same number of vehicles can lead to a different congestion level
+              in clear weather than in heavy rain or at rush hour.
+            </p>
+          </article>
+
+          <article class="glass info-card">
+            <span class="info-icon" aria-hidden="true"><i class="fa-solid fa-microchip"></i></span>
+            <h3>AI-Powered Analysis</h3>
+            <p>
+              The dashboard sends your inputs to a trained machine learning model through a
+              FastAPI backend. The model returns one congestion category: Low, Moderate, High or
+              Severe.
+            </p>
+          </article>
+        </div>
+
+        <div class="glass how-it-works">
+          <h3>How it works</h3>
+          <ol class="steps">
+            <li><span class="step-text">Enter road and traffic details.</span></li>
+            <li><span class="step-text">Submit the information to the FastAPI backend.</span></li>
+            <li><span class="step-text">The preprocessing pipeline transforms the inputs.</span></li>
+            <li><span class="step-text">The trained ML model returns a congestion category.</span></li>
+            <li><span class="step-text">The dashboard displays the result.</span></li>
+          </ol>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="site-footer">
+    <div class="container">
+      <p class="footer-title">SmartFlow AI | Smart City Traffic Analytics</p>
+      <p class="footer-note">
+        Predictions are model-generated estimates based on the inputs provided and should not be
+        treated as live traffic reports.
+      </p>
+    </div>
+  </footer>
+</body>
+</html>
