@@ -1,0 +1,7 @@
+[ 2026-10-25 21:49:18,620 ] 24 root - INFO - Succesfully loaded the data
+[ 2026-10-25 21:49:18,700 ] 42 root - INFO - Sucessfully splited the data into training and testing sets
+[ 2026-10-25 21:49:19,259 ] 47 root - INFO - Saved the raw data in the artifacts folder
+[ 2026-10-25 21:49:19,758 ] 50 root - INFO - Saved the train data in the artifacts folder
+[ 2026-10-25 21:49:19,858 ] 53 root - INFO - saved the test data in the artifacts folder 
+[ 2026-10-25 21:49:19,858 ] 49 root - INFO - Preparing Preprocessed Data..
+[ 2026-10-25 21:49:21,318 ] 13 root - INFO - Succesfully saved the Object

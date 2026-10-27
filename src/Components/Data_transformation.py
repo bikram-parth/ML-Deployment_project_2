@@ -9,6 +9,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import OneHotEncoder,OrdinalEncoder,LabelEncoder
 from sklearn.compose import ColumnTransformer
 import sys
+from src.utils import save_object
 
 @dataclass
 class DataTransformationConfig:
@@ -35,7 +36,8 @@ class DataTransformation:
 
             preprocessor=ColumnTransformer(transformers=[
                 ('numerical',normal_pipeline,numerical_col),
-                ('categorical',cat_pipeline,all_cat_col)
+                ('categorical',cat_pipeline,all_cat_col),
+                ('boolean', 'passthrough', boolean_col)
             ])
 
             return preprocessor
@@ -50,8 +52,9 @@ class DataTransformation:
             X_test_preprocessed=preprocessor.transform(X_test)
 
             le=LabelEncoder()
-            y_train_encoded=le.fit_transform(y_train)
-            y_test_encoded=le.transform(y_test)
+            y_train_encoded=le.fit_transform(y_train.values)
+            y_test_encoded=le.transform(y_test.values)
+            save_object(preprocessor,self.data_config.preprocessor_path)
 
             return (X_train_preprocessed,X_test_preprocessed,y_train_encoded,y_test_encoded)
         

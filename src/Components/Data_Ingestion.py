@@ -6,7 +6,8 @@ import os
 from dataclasses import dataclass
 from sklearn.model_selection import train_test_split
 import sys
-
+from src.Components.Data_transformation import DataTransformationConfig,DataTransformation
+from src.Components.Model_trainer import model_trainer_,model_trainer_ingest
 @dataclass
 class DataIngestionConfig:
     raw_data_path:str=os.path.join('artifacts/data.csv')
@@ -65,3 +66,12 @@ class DataIngestion:
 if __name__=='__main__':
     data_ingestion_obj=DataIngestion()
     X_train,X_test,y_train,y_test=data_ingestion_obj.initiate_data_ingestion()
+
+    data_transformation_obj=DataTransformation()
+    X_train_prep,X_test_prep,y_train_encoded,y_test_encoded=data_transformation_obj.Initiate_DataTransformation(X_train,X_test,y_train,y_test)
+
+    model_trainer=model_trainer_()
+    model_obj,r2_score=model_trainer.initiate_model_trainer(X_train_prep,X_test_prep,y_train_encoded,y_test_encoded)
+    print("r2_score of the best model is : ",r2_score)
+
+    
