@@ -3,7 +3,7 @@
 
 const USE_LOCAL_BACKEND = false;
 const LOCAL_API_URL = 'http://127.0.0.1:8000';
-const DEPLOYED_API_URL = 'https://YOUR-BACKEND-URL';
+const DEPLOYED_API_URL = 'https://ml-deployment-project-2-2.onrender.com/';
 
 // The URL actually used by the app.
 const API_BASE_URL = (USE_LOCAL_BACKEND ? LOCAL_API_URL : DEPLOYED_API_URL).replace(/\/+$/, '');
