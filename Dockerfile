@@ -3,4 +3,4 @@ COPY . /app
 WORKDIR /app
 RUN pip install -r requirements.txt
 EXPOSE $PORT
-CMD uvicorn src.Components.app:app --host 0.0.0.0 --port $PORT
+CMD uvicorn src.templates.app:app --host 0.0.0.0 --port $PORT
